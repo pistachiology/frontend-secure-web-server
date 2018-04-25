@@ -19,7 +19,13 @@
   ],
   "suffix": ".bs.js",
   "namespace": false,
-  "bs-dependencies": ["reason-react"],
+  "bs-dependencies": [
+    "reason-react",
+    "@glennsl/bs-json",
+    "bs-fetch",
+    "bs-ant-design",
+    "bs-css"
+  ],
   "refmt": 3,
   "warnings": {
     "error": "+5"
