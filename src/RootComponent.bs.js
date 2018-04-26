@@ -4,7 +4,6 @@
 var Home = require("./Home.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Component2 = require("./Component2.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("RootComponent");
@@ -21,11 +20,11 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
-              var match = self[/* state */2][/* route */0];
+              var match = self[/* state */1][/* route */0];
               if (match) {
-                return ReasonReact.element(/* None */0, /* None */0, Component2.make("Hello!", /* array */[]));
+                return ReasonReact.element(/* None */0, /* None */0, Home.make(/* array */[]));
               } else {
-                return ReasonReact.element(/* None */0, /* None */0, Home.make("hello world! 2", /* array */[]));
+                return ReasonReact.element(/* None */0, /* None */0, Home.make(/* array */[]));
               }
             }),
           /* initialState */(function () {
@@ -57,7 +56,7 @@ function make() {
                                           } else {
                                             tmp = /* Home */0;
                                           }
-                                          return Curry._1(self[/* send */4], /* UpdateRoute */[tmp]);
+                                          return Curry._1(self[/* send */3], /* UpdateRoute */[tmp]);
                                         }));
                           }),
                         ReasonReact.Router[/* unwatchUrl */2]

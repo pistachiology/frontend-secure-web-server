@@ -36,8 +36,8 @@ let make = _children => {
     },
   render: self =>
     switch (self.state.route) {
-    | Home => <Home message="hello world! 2" />
-    | _ => <Component2 greeting="Hello!" />
+    | Home => <Home />
+    | _ => <Home />
     },
 };
 

@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Antd_Menu = require("bs-ant-design/src/Antd_Menu.js");
 var Antd_Layout = require("bs-ant-design/src/Antd_Layout.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Antd_Breadcrumb = require("bs-ant-design/src/Antd_Breadcrumb.js");
 
 var menu = Css.style(/* :: */[
       /* `declaration */[
@@ -17,7 +18,33 @@ var menu = Css.style(/* :: */[
       /* [] */0
     ]);
 
-var Styles = /* module */[/* menu */menu];
+var content = Css.style(/* :: */[
+      Css.padding2(Css.px(0), Css.px(50)),
+      /* [] */0
+    ]);
+
+var childbox = Css.style(/* :: */[
+      Css.background(Css.hex("fff")),
+      /* :: */[
+        Css.padding(Css.px(24)),
+        /* :: */[
+          Css.minHeight(Css.px(280)),
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var breadcrumb = Css.style(/* :: */[
+      Css.important(Css.margin2(Css.px(16), Css.px(16))),
+      /* [] */0
+    ]);
+
+var Styles = /* module */[
+  /* menu */menu,
+  /* content */content,
+  /* childbox */childbox,
+  /* breadcrumb */breadcrumb
+];
 
 var component = ReasonReact.statelessComponent("Header");
 
@@ -34,12 +61,16 @@ function make(children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Antd_Layout.make(/* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Header[/* make */0](/* None */0, /* Some */["header"], /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Menu.make(/* Some */[/* Dark */758939798], /* Some */[/* Horizontal */208994564], /* None */0, /* None */0, /* Some */[/* array */["2"]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[menu], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ReasonReact.element(/* Some */["1"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["nav 1"])),
-                                                  ReasonReact.element(/* Some */["2"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["nav 2"])),
-                                                  ReasonReact.element(/* Some */["3"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["nav 3"]))
+                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Header[/* make */0](/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Menu.make(/* Some */[/* Dark */758939798], /* Some */[/* Horizontal */208994564], /* None */0, /* None */0, /* Some */[/* array */["1"]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[menu], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                  ReasonReact.element(/* Some */["1"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Home"])),
+                                                  ReasonReact.element(/* Some */["2"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["About"]))
                                                 ]))])),
-                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Content[/* make */0](/* None */0, /* None */0, /* None */0, children))
+                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Content[/* make */0](/* None */0, /* Some */[content], /* None */0, /* array */[
+                                        ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[breadcrumb], /* None */0)(/* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Home"]))])),
+                                        ReasonReact.createDomElement("div", {
+                                              className: childbox
+                                            }, children)
+                                      ]))
                             ]));
             }),
           /* initialState */component[/* initialState */10],

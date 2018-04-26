@@ -1,3 +1,5 @@
+open Belt;
+
 module type Config = {
   type data;
   type payload;
@@ -13,27 +15,37 @@ module type Config = {
 
 module type FactoryConfig = {let baseUrl: string;};
 
+type props('a, 'b) = {
+  state: 'a,
+  fetch: 'b,
+};
+
+type status =
+  | Idle
+  | Fetching
+  | Failed;
+
+type abstractData('a) =
+  | Success('a)
+  | Failed(string)
+  | None;
+
+type abstractAction('a) =
+  | Fetch
+  | ParseData('a)
+  | Resolve;
+
 module CreateFetcherFactory = (FC: FactoryConfig) => {
   /* TODO: Add query to fetcher  */
   module CreateFetcher = (C: Config) => {
-    type status =
-      | Idle
-      | Fetching
-      | Failed;
     type payload = C.payload;
     type state = {
       data: C.data,
       reason: option(string),
       status,
     };
-    type data =
-      | Success(C.data)
-      | Failed(string)
-      | None;
-    type action =
-      | Fetch
-      | ParseData(data)
-      | Resolve;
+    type data = abstractData(C.data);
+    type action = abstractAction(data);
     let url = FC.baseUrl ++ C.url;
     /* type query = C.query; */
     external dictToObject : Js.Dict.t(string) => Js.t({..}) = "%identity";
@@ -101,14 +113,21 @@ module CreateFetcherFactory = (FC: FactoryConfig) => {
         if (lazy_ == false) {
           self.send(Fetch);
         };
-        ReasonReact.NoUpdate;
+        ();
       },
       willReceiveProps: self => {
         self.send(Fetch);
         self.state;
       },
-      render: self => render(~state=self.state),
+      render: self => {
+        let state = self.state;
+        let fetch = () => self.send(Fetch);
+        let child = {state, fetch};
+        render(child);
+      },
     };
+    let compose = (~payload=?, ~headers=?, ~key=?, ~ref=?, ~lazy_=false, ~render) =>
+      ReasonReact.element(~key?, ~ref?, make(~render, ~payload?, ~headers?, ~lazy_, [||]));
   };
   /* }; */
 };
@@ -119,6 +138,15 @@ include
       let baseUrl = "/api/";
     },
   );
+
+module Composer = {
+  let generate = make => make();
+  let component = ReasonReact.statelessComponent("FetcherComposer");
+  let make = (~compose, ~render, _children) => {
+    ...component,
+    render: _self => render(compose |> List.map(_, comp => comp |> generate)),
+  };
+};
 
 module RLimitConfig = {
   type data = {
@@ -135,7 +163,7 @@ module RLimitConfig = {
   /* type query; */
   let name = "RLimitFetcher";
   let url = "rlimit";
-  let headers = [("ExtraHeader", "Pistachio-")];
+  let headers = [];
   let defaultValue = {
     curCpuLimit: 0,
     maxCpuLimit: 0,
@@ -162,3 +190,45 @@ module RLimitConfig = {
 };
 
 module RLimit = CreateFetcher(RLimitConfig);
+
+module FdListConfig = {
+  type data = list(string);
+  type payload;
+  /* type query; */
+  let name = "RLimitFetcher";
+  let url = "fd";
+  let headers = [];
+  let defaultValue = [];
+  let method_ = Fetch.Get;
+  let encodePayload = _payload => Js.Json.null;
+  let decodeState = json =>
+    switch (Js.Json.decodeArray(json)) {
+    | Some(json) =>
+      json
+      |> List.fromArray
+      |> List.keepMap(_, d => d |> Js.Json.decodeNumber)
+      |> List.map(_, d => d |> int_of_float |> string_of_int)
+    | None => []
+    };
+};
+
+module FdList = CreateFetcher(FdListConfig);
+
+module MountListConfig = {
+  type data = list(string);
+  type payload;
+  /* type query; */
+  let name = "MountList";
+  let url = "mount";
+  let headers = [];
+  let defaultValue = [];
+  let method_ = Fetch.Get;
+  let encodePayload = _payload => Js.Json.null;
+  let decodeState = json =>
+    switch (Js.Json.decodeArray(json)) {
+    | Some(json) => json |> List.fromArray |> List.keepMap(_, d => d |> Js.Json.decodeString)
+    | None => []
+    };
+};
+
+module MountList = CreateFetcher(MountListConfig);
