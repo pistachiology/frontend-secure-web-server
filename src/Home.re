@@ -1,7 +1,5 @@
 open Belt;
 
-let component = ReasonReact.statelessComponent("Home Page");
-
 module Styles = {
   let title = Css.(style([fontSize(48 |> px)]));
   let container =
@@ -14,6 +12,16 @@ module Styles = {
         selector(" h3", [fontSize(16 |> px), fontWeight(400), marginLeft(30 |> px)]),
       ])
     );
+  let memoryAbuseContainer =
+    Css.(
+      style([
+        width(100. |> pct),
+        Css.float(`left),
+        selector(" span", [fontWeight(800), paddingRight(8 |> px)]),
+        selector(" input", [border(1 |> px, `solid, "000" |> hex)]),
+        selector(" >*", [marginRight(8 |> px)]),
+      ])
+    );
 };
 
 let convertRlimitToDataSource = (rlimit: Fetcher.RLimitConfig.data) => [
@@ -21,7 +29,7 @@ let convertRlimitToDataSource = (rlimit: Fetcher.RLimitConfig.data) => [
   ("max_cpu_limit", rlimit.maxCpuLimit |> string_of_int),
   ("cur_as_limit", rlimit.curAsLimit |> string_of_int),
   ("max_as_limit", rlimit.maxAsLimit |> string_of_int),
-  ("cur_stak_limit", rlimit.curStackLimit |> string_of_int),
+  ("cur_stack_limit", rlimit.curStackLimit |> string_of_int),
   ("max_stack_limit", rlimit.maxStackLimit |> string_of_int),
   ("cur_data_limit", rlimit.curDataLimit |> string_of_int),
   ("max_data_limit", rlimit.maxDataLimit |> string_of_int),
@@ -36,62 +44,117 @@ let rec listToString_ = d =>
 
 let listToString = d => "[" ++ listToString_(d) ++ "]";
 
-let t1 = () => <Fetcher.RLimit render=(_state => <div />) />;
+module Component = {
+  type action =
+    | SetMemory(int);
+  type state = {memory: int};
+  let component = ReasonReact.reducerComponent("HomePageContainer");
+  let make = (~rlimit, ~fdList, ~mountList, _children) => {
+    ...component,
+    initialState: () => {memory: 1024},
+    reducer: (action, _state) =>
+      switch (action) {
+      | SetMemory(value) => ReasonReact.Update({memory: value})
+      },
+    render: self =>
+      ReasonReact.(
+        <div className=Styles.container>
+          <h1 className=Styles.title> ("Dashboard" |> string) </h1>
+          <div className=Styles.infoContainer>
+            <h2> ("RLimit" |> string) </h2>
+            <SimpleTable dataSource=(rlimit |> convertRlimitToDataSource) />
+          </div>
+          <div className=Styles.infoContainer>
+            <h2> ("FD List" |> string) </h2>
+            <h3> (fdList |> listToString |> string) </h3>
+          </div>
+          <div className=Styles.infoContainer>
+            <h2> ("Mount List" |> string) </h2>
+            (
+              mountList
+              |> List.mapWithIndex(_, (ikey, text) =>
+                   <h3 key=(ikey |> string_of_int)> (text |> string) </h3>
+                 )
+              |> List.toArray
+              |> array
+            )
+          </div>
+          <div className=Styles.infoContainer>
+            <h2> ("Reverse Shell & Memory Limit" |> string) </h2>
+            <div className=Styles.memoryAbuseContainer>
+              <span> ("Memory Size (byte): " |> string) </span>
+              <input
+                _type="number"
+                name="memorySize"
+                value=(self.state.memory |> string_of_int)
+                onChange=(
+                  event => {
+                    let target =
+                      event |> ReactEventRe.Synthetic.target |> ReactDOMRe.domElementToObj;
+                    Js.log(target##value);
+                    self.send(
+                      SetMemory(
+                        switch (target##value) {
+                        | "" => 0
+                        | myMessage =>
+                          switch (myMessage |> int_of_string) {
+                          | value => value
+                          | exception (Failure("int_of_string")) => self.state.memory
+                          }
+                        },
+                      ),
+                    );
+                  }
+                )
+              />
+              <Antd.Button
+                _type=`primary
+                onClick=(
+                  _event =>
+                    Fetcher.Allocate.fetch(~query="/" ++ string_of_int(self.state.memory), ())
+                    |> Js.Promise.then_(res => {
+                         let _ =
+                           switch (res |> Fetch.Response.status) {
+                           | 400 => %bs.raw
+                                    {| alert("container receive fail") |}
+                           | _ => %bs.raw
+                                  {| alert("receive success") |}
+                           };
+                         Js.Promise.resolve(res);
+                       })
+                    |> ignore
+                )>
+                "Allocate"
+              </Antd.Button>
+            </div>
+          </div>
+        </div>
+      ),
+  };
+};
 
-let t2 = () => <Fetcher.MountList render=(_state => <div />) />;
+let fetchers = (Fetcher.RLimit.c(), Fetcher.FdList.c(), Fetcher.MountList.c());
 
-let test = t => t ? t2() : t1();
+let component = ReasonReact.statelessComponent("HomePage");
 
 let make = _children => {
   ...component,
   render: _self =>
-    <WithHeader>
-      <Fetcher.RLimit
+    ReasonReact.(
+      <Fetcher.Composer3
+        compose=fetchers
         render=(
-          ({state: rlimitState}) =>
-            <Fetcher.MountList
-              render=(
-                ({state: mountListState}) =>
-                  <Fetcher.FdList
-                    render=ReasonReact.(
-                             ({state: fdListState}) =>
-                               switch (
-                                 rlimitState.status,
-                                 fdListState.status,
-                                 mountListState.status,
-                               ) {
-                               | (Fetcher.Idle, Fetcher.Idle, Fetcher.Idle) =>
-                                 <div className=Styles.container>
-                                   <h1 className=Styles.title> ("Dashboard" |> string) </h1>
-                                   <div className=Styles.infoContainer>
-                                     <h2> ("RLimit" |> string) </h2>
-                                     <SimpleTable
-                                       dataSource=(rlimitState.data |> convertRlimitToDataSource)
-                                     />
-                                   </div>
-                                   <div className=Styles.infoContainer>
-                                     <h2> ("FD List" |> string) </h2>
-                                     <h3> (fdListState.data |> listToString |> string) </h3>
-                                   </div>
-                                   <div className=Styles.infoContainer>
-                                     <h2> ("Mount List" |> string) </h2>
-                                     (
-                                       mountListState.data
-                                       |> List.mapWithIndex(_, (ikey, text) =>
-                                            <h3 key=(ikey |> string_of_int)> (text |> string) </h3>
-                                          )
-                                       |> List.toArray
-                                       |> array
-                                     )
-                                   </div>
-                                 </div>
-                               | _ => <div key="1"> ("Loading" |> string) </div>
-                               }
-                           )
-                  />
-              )
-            />
+          ((rlimit, fdList, mountList)) =>
+            switch (rlimit.state.status, fdList.state.status, mountList.state.status) {
+            | (Fetcher.Idle, Fetcher.Idle, Fetcher.Idle) =>
+              <Component
+                rlimit=rlimit.state.data
+                fdList=fdList.state.data
+                mountList=mountList.state.data
+              />
+            | _ => <div key="4"> ("Loading" |> string) </div>
+            }
         )
       />
-    </WithHeader>,
+    ),
 };

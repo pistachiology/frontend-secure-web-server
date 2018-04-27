@@ -46,17 +46,25 @@ module CreateFetcherFactory = (FC: FactoryConfig) => {
     };
     type data = abstractData(C.data);
     type action = abstractAction(data);
-    let url = FC.baseUrl ++ C.url;
     /* type query = C.query; */
     external dictToObject : Js.Dict.t(string) => Js.t({..}) = "%identity";
     /* function */
-    let fetch = (~payload=?, ~headers: option(list((string, string)))=?, ()) => {
+    let fetch = (~payload=?, ~headers: option(list((string, string)))=?, ~query=?, ()) => {
       let body =
         switch (payload) {
         | Some(payload) =>
           Some(Fetch.BodyInit.make(payload |> C.encodePayload |> Json.stringify))
         | None => None
         };
+      let url =
+        FC.baseUrl
+        ++ C.url
+        ++ (
+          switch (query) {
+          | Some(q) => q
+          | _ => ""
+          }
+        );
       let headers =
         Fetch.HeadersInit.make(
           (
@@ -74,7 +82,7 @@ module CreateFetcherFactory = (FC: FactoryConfig) => {
     };
     /* module Fetcher = { */
     let component = ReasonReact.reducerComponent(C.name);
-    let make = (~render, ~payload=?, ~headers=?, ~lazy_=false, _children) => {
+    let make = (~render, ~payload=?, ~headers=?, ~query=?, ~lazy_=false, _children) => {
       ...component,
       initialState: () => {data: C.defaultValue, status: Idle, reason: None},
       reducer: (action, state) =>
@@ -85,7 +93,7 @@ module CreateFetcherFactory = (FC: FactoryConfig) => {
             (
               self =>
                 Js.Promise.(
-                  fetch(~payload?, ~headers?, ())
+                  fetch(~payload?, ~headers?, ~query?, ())
                   |> then_(Fetch.Response.json)
                   |> then_(json => {
                        ParseData(Success(json |> C.decodeState)) |> self.send;
@@ -126,7 +134,7 @@ module CreateFetcherFactory = (FC: FactoryConfig) => {
         render(child);
       },
     };
-    let compose = (~payload=?, ~headers=?, ~key=?, ~ref=?, ~lazy_=false, ~render) =>
+    let c = (~payload=?, ~headers=?, ~key=?, ~ref=?, ~lazy_=false, (), render) =>
       ReasonReact.element(~key?, ~ref?, make(~render, ~payload?, ~headers?, ~lazy_, [||]));
   };
   /* }; */
@@ -139,12 +147,65 @@ include
     },
   );
 
-module Composer = {
-  let generate = make => make();
+module Composer2 = {
+  /* to compose only one or two component */
+  let component = ReasonReact.statelessComponent("FetcherComposer2");
+  let make = (~compose: ('c1, 'c2), ~render, _children) => {
+    ...component,
+    render: _self => {
+      let (comp, comp2) = compose;
+      comp2(props2 => comp(props => render((props, props2))));
+    },
+  };
+};
+
+module Composer3 = {
+  /* cannot use because have different ~render type
+     type composeType('render, 'func) =
+       | Result('render)
+       | Intermediate('func);
+     let rec doCompose_ = (~results=[], ~render, ~compose) =>
+       switch (compose) {
+       | [] => Result(render(results))
+       | [head, ...tail] =>
+         let dynamicRender = props =>
+           switch (doCompose_(~render, ~compose=tail, ~results=[props, ...results])) {
+           | Result(res) => res
+           | Intermediate(func) => func
+           };
+         Intermediate(head(~render=dynamicRender));
+       };
+     let doCompose = (~render, ~compose) =>
+       switch (doCompose_(~render, ~compose, ~results=[])) {
+       | Result(res) => res
+       | Intermediate(_func) =>
+         Js.Console.error("Shouldn't return intermediate !.\nPlease report to author.");
+         render([]);
+       };
+       so let's do it directly way.
+     */
+  let component = ReasonReact.statelessComponent("FetcherComposer3");
+  let make = (~compose, ~render, _children) => {
+    ...component,
+    render: _self => {
+      let (comp, comp2, comp3) = compose;
+      comp3(props3 => comp2(props2 => comp(props => render((props, props2, props3)))));
+    },
+  };
+};
+
+module Composer = Composer3;
+
+module Composer4 = {
   let component = ReasonReact.statelessComponent("FetcherComposer");
   let make = (~compose, ~render, _children) => {
     ...component,
-    render: _self => render(compose |> List.map(_, comp => comp |> generate)),
+    render: _self => {
+      let (comp, comp2, comp3, comp4) = compose;
+      comp4(props4 =>
+        comp3(props3 => comp2(props2 => comp(props => render((props, props2, props3, props4)))))
+      );
+    },
   };
 };
 
@@ -232,3 +293,33 @@ module MountListConfig = {
 };
 
 module MountList = CreateFetcher(MountListConfig);
+
+module ReverseShellConfig = {
+  type data = Js.Json.t;
+  type payload;
+  /* type query; */
+  let name = "MountList";
+  let url = "mount";
+  let headers = [];
+  let defaultValue = Js.Json.null;
+  let method_ = Fetch.Get;
+  let encodePayload = _payload => Js.Json.null;
+  let decodeState = _json => Js.Json.null;
+};
+
+module ReverseShell = CreateFetcher(ReverseShellConfig);
+
+module AllocateConfig = {
+  type data = Js.Json.t;
+  type payload;
+  /* type query; */
+  let name = "AllocateFetcher";
+  let url = "allocate";
+  let headers = [];
+  let defaultValue = Js.Json.null;
+  let method_ = Fetch.Get;
+  let encodePayload = _payload => Js.Json.null;
+  let decodeState = _json => Js.Json.null;
+};
+
+module Allocate = CreateFetcher(AllocateConfig);

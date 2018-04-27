@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var React = require("react");
 var Antd_Menu = require("bs-ant-design/src/Antd_Menu.js");
 var Antd_Layout = require("bs-ant-design/src/Antd_Layout.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -62,8 +63,18 @@ function make(children) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Antd_Layout.make(/* None */0, /* None */0, /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Header[/* make */0](/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Menu.make(/* Some */[/* Dark */758939798], /* Some */[/* Horizontal */208994564], /* None */0, /* None */0, /* Some */[/* array */["1"]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[menu], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ReasonReact.element(/* Some */["1"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Home"])),
-                                                  ReasonReact.element(/* Some */["2"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["About"]))
+                                                  ReasonReact.element(/* Some */["1"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
+                                                                  onClick: (function () {
+                                                                      ReasonReact.Router[/* push */0]("/");
+                                                                      return /* () */0;
+                                                                    })
+                                                                }, "Home")])),
+                                                  ReasonReact.element(/* Some */["2"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
+                                                                  onClick: (function () {
+                                                                      ReasonReact.Router[/* push */0]("/about");
+                                                                      return /* () */0;
+                                                                    })
+                                                                }, "About")]))
                                                 ]))])),
                               ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Content[/* make */0](/* None */0, /* Some */[content], /* None */0, /* array */[
                                         ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[breadcrumb], /* None */0)(/* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Home"]))])),

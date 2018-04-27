@@ -19,9 +19,9 @@ let make = _children => {
           self.send(
             UpdateRoute(
               switch (url.path) {
-              | ["/"] => Home
-              | ["/index"] => Home
-              | ["/about"] => About
+              | [""] => Home
+              | ["index"] => Home
+              | ["about"] => About
               | _ => Home
               },
             ),
@@ -32,13 +32,19 @@ let make = _children => {
   ],
   reducer: (action, _state) =>
     switch (action) {
-    | UpdateRoute(route) => ReasonReact.Update({route: route})
+    | UpdateRoute(route) =>
+      Js.log2("update route ", route);
+      ReasonReact.Update({route: route});
     },
   render: self =>
-    switch (self.state.route) {
-    | Home => <Home />
-    | _ => <Home />
-    },
+    <WithHeader>
+      (
+        switch (self.state.route) {
+        | Home => <Home />
+        | About => <About />
+        }
+      )
+    </WithHeader>,
 };
 
 let jsComponent = ReasonReact.wrapReasonForJs(~component, _jsProps => make([||]));

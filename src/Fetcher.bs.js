@@ -13,16 +13,18 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 function CreateFetcherFactory(FC) {
   var CreateFetcher = function (C) {
-    var url = FC[/* baseUrl */0] + C[/* url */1];
-    var fetch$1 = function (payload, headers, _) {
+    var fetch$1 = function (payload, headers, query, _) {
       var body = payload ? /* Some */[Json.stringify(Curry._1(C[/* encodePayload */5], payload[0]))] : /* None */0;
+      var url = FC[/* baseUrl */0] + (C[/* url */1] + (
+          query ? query[0] : ""
+        ));
       var headers$1 = Object.assign({
             "Content-Type": "application/json"
           }, Object.assign(Js_dict.fromList(C[/* headers */2]), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
       return fetch(url, Fetch.RequestInit[/* make */0](/* Some */[C[/* method__ */4]], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
     };
     var component = ReasonReact.reducerComponent(C[/* name */0]);
-    var make = function (render, payload, headers, $staropt$star, _) {
+    var make = function (render, payload, headers, query, $staropt$star, _) {
       var lazy_ = $staropt$star ? $staropt$star[0] : false;
       return /* record */[
               /* debugName */component[/* debugName */0],
@@ -76,7 +78,7 @@ function CreateFetcherFactory(FC) {
                                   /* status : Fetching */1
                                 ],
                                 (function (self) {
-                                    fetch$1(payload, headers, /* () */0).then((function (prim) {
+                                    fetch$1(payload, headers, query, /* () */0).then((function (prim) {
                                                 return prim.json();
                                               })).then((function (json) {
                                               Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [Curry._1(C[/* decodeState */6], json)])]);
@@ -113,16 +115,15 @@ function CreateFetcherFactory(FC) {
               /* jsElementWrapped */component[/* jsElementWrapped */14]
             ];
     };
-    var compose = function (payload, headers, key, ref, $staropt$star, render) {
+    var c = function (payload, headers, key, ref, $staropt$star, _, render) {
       var lazy_ = $staropt$star ? $staropt$star[0] : false;
-      return ReasonReact.element(key, ref, make(render, payload, headers, /* Some */[lazy_], /* array */[]));
+      return ReasonReact.element(key, ref, make(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
     };
     return /* module */[
-            /* url */url,
             /* fetch */fetch$1,
             /* component */component,
             /* make */make,
-            /* compose */compose
+            /* c */c
           ];
   };
   return /* module */[/* CreateFetcher */CreateFetcher];
@@ -131,16 +132,18 @@ function CreateFetcherFactory(FC) {
 var baseUrl = "/api/";
 
 function CreateFetcher(C) {
-  var url = baseUrl + C[/* url */1];
-  var fetch$1 = function (payload, headers, _) {
+  var fetch$1 = function (payload, headers, query, _) {
     var body = payload ? /* Some */[Json.stringify(Curry._1(C[/* encodePayload */5], payload[0]))] : /* None */0;
+    var url = baseUrl + (C[/* url */1] + (
+        query ? query[0] : ""
+      ));
     var headers$1 = Object.assign({
           "Content-Type": "application/json"
         }, Object.assign(Js_dict.fromList(C[/* headers */2]), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
     return fetch(url, Fetch.RequestInit[/* make */0](/* Some */[C[/* method__ */4]], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
   };
   var component = ReasonReact.reducerComponent(C[/* name */0]);
-  var make = function (render, payload, headers, $staropt$star, _) {
+  var make = function (render, payload, headers, query, $staropt$star, _) {
     var lazy_ = $staropt$star ? $staropt$star[0] : false;
     return /* record */[
             /* debugName */component[/* debugName */0],
@@ -194,7 +197,7 @@ function CreateFetcher(C) {
                                 /* status : Fetching */1
                               ],
                               (function (self) {
-                                  fetch$1(payload, headers, /* () */0).then((function (prim) {
+                                  fetch$1(payload, headers, query, /* () */0).then((function (prim) {
                                               return prim.json();
                                             })).then((function (json) {
                                             Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [Curry._1(C[/* decodeState */6], json)])]);
@@ -231,24 +234,19 @@ function CreateFetcher(C) {
             /* jsElementWrapped */component[/* jsElementWrapped */14]
           ];
   };
-  var compose = function (payload, headers, key, ref, $staropt$star, render) {
+  var c = function (payload, headers, key, ref, $staropt$star, _, render) {
     var lazy_ = $staropt$star ? $staropt$star[0] : false;
-    return ReasonReact.element(key, ref, make(render, payload, headers, /* Some */[lazy_], /* array */[]));
+    return ReasonReact.element(key, ref, make(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
   };
   return /* module */[
-          /* url */url,
           /* fetch */fetch$1,
           /* component */component,
           /* make */make,
-          /* compose */compose
+          /* c */c
         ];
 }
 
-function generate(make) {
-  return Curry._1(make, /* () */0);
-}
-
-var component = ReasonReact.statelessComponent("FetcherComposer");
+var component = ReasonReact.statelessComponent("FetcherComposer2");
 
 function make(compose, render, _) {
   return /* record */[
@@ -262,9 +260,15 @@ function make(compose, render, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return Curry._1(render, Belt_List.map(compose, (function (comp) {
-                                return Curry._1(comp, /* () */0);
-                              })));
+              var comp = compose[0];
+              return Curry._1(compose[1], (function (props2) {
+                            return Curry._1(comp, (function (props) {
+                                          return Curry._1(render, /* tuple */[
+                                                      props,
+                                                      props2
+                                                    ]);
+                                        }));
+                          }));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -274,10 +278,95 @@ function make(compose, render, _) {
         ];
 }
 
-var Composer = /* module */[
-  /* generate */generate,
+var Composer2 = /* module */[
   /* component */component,
   /* make */make
+];
+
+var component$1 = ReasonReact.statelessComponent("FetcherComposer3");
+
+function make$1(compose, render, _) {
+  return /* record */[
+          /* debugName */component$1[/* debugName */0],
+          /* reactClassInternal */component$1[/* reactClassInternal */1],
+          /* handedOffState */component$1[/* handedOffState */2],
+          /* willReceiveProps */component$1[/* willReceiveProps */3],
+          /* didMount */component$1[/* didMount */4],
+          /* didUpdate */component$1[/* didUpdate */5],
+          /* willUnmount */component$1[/* willUnmount */6],
+          /* willUpdate */component$1[/* willUpdate */7],
+          /* shouldUpdate */component$1[/* shouldUpdate */8],
+          /* render */(function () {
+              var comp2 = compose[1];
+              var comp = compose[0];
+              return Curry._1(compose[2], (function (props3) {
+                            return Curry._1(comp2, (function (props2) {
+                                          return Curry._1(comp, (function (props) {
+                                                        return Curry._1(render, /* tuple */[
+                                                                    props,
+                                                                    props2,
+                                                                    props3
+                                                                  ]);
+                                                      }));
+                                        }));
+                          }));
+            }),
+          /* initialState */component$1[/* initialState */10],
+          /* retainedProps */component$1[/* retainedProps */11],
+          /* reducer */component$1[/* reducer */12],
+          /* subscriptions */component$1[/* subscriptions */13],
+          /* jsElementWrapped */component$1[/* jsElementWrapped */14]
+        ];
+}
+
+var Composer3 = /* module */[
+  /* component */component$1,
+  /* make */make$1
+];
+
+var component$2 = ReasonReact.statelessComponent("FetcherComposer");
+
+function make$2(compose, render, _) {
+  return /* record */[
+          /* debugName */component$2[/* debugName */0],
+          /* reactClassInternal */component$2[/* reactClassInternal */1],
+          /* handedOffState */component$2[/* handedOffState */2],
+          /* willReceiveProps */component$2[/* willReceiveProps */3],
+          /* didMount */component$2[/* didMount */4],
+          /* didUpdate */component$2[/* didUpdate */5],
+          /* willUnmount */component$2[/* willUnmount */6],
+          /* willUpdate */component$2[/* willUpdate */7],
+          /* shouldUpdate */component$2[/* shouldUpdate */8],
+          /* render */(function () {
+              var comp3 = compose[2];
+              var comp2 = compose[1];
+              var comp = compose[0];
+              return Curry._1(compose[3], (function (props4) {
+                            return Curry._1(comp3, (function (props3) {
+                                          return Curry._1(comp2, (function (props2) {
+                                                        return Curry._1(comp, (function (props) {
+                                                                      return Curry._1(render, /* tuple */[
+                                                                                  props,
+                                                                                  props2,
+                                                                                  props3,
+                                                                                  props4
+                                                                                ]);
+                                                                    }));
+                                                      }));
+                                        }));
+                          }));
+            }),
+          /* initialState */component$2[/* initialState */10],
+          /* retainedProps */component$2[/* retainedProps */11],
+          /* reducer */component$2[/* reducer */12],
+          /* subscriptions */component$2[/* subscriptions */13],
+          /* jsElementWrapped */component$2[/* jsElementWrapped */14]
+        ];
+}
+
+var Composer4 = /* module */[
+  /* component */component$2,
+  /* make */make$2
 ];
 
 var name = "RLimitFetcher";
@@ -322,312 +411,20 @@ var RLimitConfig = /* module */[
   /* decodeState */decodeState
 ];
 
-var url$1 = "/api/rlimit";
-
-function fetch$1(payload, headers, _) {
+function fetch$1(payload, headers, query, _) {
   var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
+  var url$1 = baseUrl + (url + (
+      query ? query[0] : ""
+    ));
   var headers$1 = Object.assign({
         "Content-Type": "application/json"
       }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
   return fetch(url$1, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
 }
 
-var component$1 = ReasonReact.reducerComponent(name);
+var component$3 = ReasonReact.reducerComponent(name);
 
-function make$1(render, payload, headers, $staropt$star, _) {
-  var lazy_ = $staropt$star ? $staropt$star[0] : false;
-  return /* record */[
-          /* debugName */component$1[/* debugName */0],
-          /* reactClassInternal */component$1[/* reactClassInternal */1],
-          /* handedOffState */component$1[/* handedOffState */2],
-          /* willReceiveProps */(function (self) {
-              Curry._1(self[/* send */3], /* Fetch */0);
-              return self[/* state */1];
-            }),
-          /* didMount */(function (self) {
-              if (lazy_ === false) {
-                Curry._1(self[/* send */3], /* Fetch */0);
-              }
-              return /* () */0;
-            }),
-          /* didUpdate */component$1[/* didUpdate */5],
-          /* willUnmount */component$1[/* willUnmount */6],
-          /* willUpdate */component$1[/* willUpdate */7],
-          /* shouldUpdate */component$1[/* shouldUpdate */8],
-          /* render */(function (self) {
-              var state = self[/* state */1];
-              var fetch = function () {
-                return Curry._1(self[/* send */3], /* Fetch */0);
-              };
-              return Curry._1(render, /* record */[
-                          /* state */state,
-                          /* fetch */fetch
-                        ]);
-            }),
-          /* initialState */(function () {
-              return /* record */[
-                      /* data */defaultValue,
-                      /* reason : None */0,
-                      /* status : Idle */0
-                    ];
-            }),
-          /* retainedProps */component$1[/* retainedProps */11],
-          /* reducer */(function (action, state) {
-              if (typeof action === "number") {
-                if (action !== 0) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */state[/* data */0],
-                              /* reason */state[/* reason */1],
-                              /* status : Idle */0
-                            ]]);
-                } else {
-                  return /* UpdateWithSideEffects */Block.__(2, [
-                            /* record */[
-                              /* data */state[/* data */0],
-                              /* reason */state[/* reason */1],
-                              /* status : Fetching */1
-                            ],
-                            (function (self) {
-                                fetch$1(payload, headers, /* () */0).then((function (prim) {
-                                            return prim.json();
-                                          })).then((function (json) {
-                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState(json)])]);
-                                          return Promise.resolve(null);
-                                        })).catch((function (err) {
-                                        console.log("Error: ", err);
-                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
-                                        return Promise.resolve(null);
-                                      }));
-                                return /* () */0;
-                              })
-                          ]);
-                }
-              } else {
-                var fetchedData = action[0];
-                if (typeof fetchedData === "number") {
-                  return /* NoUpdate */0;
-                } else if (fetchedData.tag) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */state[/* data */0],
-                              /* reason : Some */[fetchedData[0]],
-                              /* status : Failed */2
-                            ]]);
-                } else {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */fetchedData[0],
-                              /* reason : None */0,
-                              /* status : Idle */0
-                            ]]);
-                }
-              }
-            }),
-          /* subscriptions */component$1[/* subscriptions */13],
-          /* jsElementWrapped */component$1[/* jsElementWrapped */14]
-        ];
-}
-
-function compose(payload, headers, key, ref, $staropt$star, render) {
-  var lazy_ = $staropt$star ? $staropt$star[0] : false;
-  return ReasonReact.element(key, ref, make$1(render, payload, headers, /* Some */[lazy_], /* array */[]));
-}
-
-var RLimit = /* module */[
-  /* url */url$1,
-  /* fetch */fetch$1,
-  /* component */component$1,
-  /* make */make$1,
-  /* compose */compose
-];
-
-var name$1 = "RLimitFetcher";
-
-var url$2 = "fd";
-
-function encodePayload$1() {
-  return null;
-}
-
-function decodeState$1(json) {
-  var match = Js_json.decodeArray(json);
-  if (match) {
-    var __x = Belt_List.fromArray(match[0]);
-    var __x$1 = Belt_List.keepMap(__x, Js_json.decodeNumber);
-    return Belt_List.map(__x$1, (function (d) {
-                  return String(d | 0);
-                }));
-  } else {
-    return /* [] */0;
-  }
-}
-
-var FdListConfig = /* module */[
-  /* name */name$1,
-  /* url */url$2,
-  /* headers : [] */0,
-  /* defaultValue : [] */0,
-  /* method__ : Get */0,
-  /* encodePayload */encodePayload$1,
-  /* decodeState */decodeState$1
-];
-
-var url$3 = "/api/fd";
-
-function fetch$2(payload, headers, _) {
-  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
-  var headers$1 = Object.assign({
-        "Content-Type": "application/json"
-      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
-  return fetch(url$3, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
-}
-
-var component$2 = ReasonReact.reducerComponent(name$1);
-
-function make$2(render, payload, headers, $staropt$star, _) {
-  var lazy_ = $staropt$star ? $staropt$star[0] : false;
-  return /* record */[
-          /* debugName */component$2[/* debugName */0],
-          /* reactClassInternal */component$2[/* reactClassInternal */1],
-          /* handedOffState */component$2[/* handedOffState */2],
-          /* willReceiveProps */(function (self) {
-              Curry._1(self[/* send */3], /* Fetch */0);
-              return self[/* state */1];
-            }),
-          /* didMount */(function (self) {
-              if (lazy_ === false) {
-                Curry._1(self[/* send */3], /* Fetch */0);
-              }
-              return /* () */0;
-            }),
-          /* didUpdate */component$2[/* didUpdate */5],
-          /* willUnmount */component$2[/* willUnmount */6],
-          /* willUpdate */component$2[/* willUpdate */7],
-          /* shouldUpdate */component$2[/* shouldUpdate */8],
-          /* render */(function (self) {
-              var state = self[/* state */1];
-              var fetch = function () {
-                return Curry._1(self[/* send */3], /* Fetch */0);
-              };
-              return Curry._1(render, /* record */[
-                          /* state */state,
-                          /* fetch */fetch
-                        ]);
-            }),
-          /* initialState */(function () {
-              return /* record */[
-                      /* data : [] */0,
-                      /* reason : None */0,
-                      /* status : Idle */0
-                    ];
-            }),
-          /* retainedProps */component$2[/* retainedProps */11],
-          /* reducer */(function (action, state) {
-              if (typeof action === "number") {
-                if (action !== 0) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */state[/* data */0],
-                              /* reason */state[/* reason */1],
-                              /* status : Idle */0
-                            ]]);
-                } else {
-                  return /* UpdateWithSideEffects */Block.__(2, [
-                            /* record */[
-                              /* data */state[/* data */0],
-                              /* reason */state[/* reason */1],
-                              /* status : Fetching */1
-                            ],
-                            (function (self) {
-                                fetch$2(payload, headers, /* () */0).then((function (prim) {
-                                            return prim.json();
-                                          })).then((function (json) {
-                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState$1(json)])]);
-                                          return Promise.resolve(null);
-                                        })).catch((function (err) {
-                                        console.log("Error: ", err);
-                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
-                                        return Promise.resolve(null);
-                                      }));
-                                return /* () */0;
-                              })
-                          ]);
-                }
-              } else {
-                var fetchedData = action[0];
-                if (typeof fetchedData === "number") {
-                  return /* NoUpdate */0;
-                } else if (fetchedData.tag) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */state[/* data */0],
-                              /* reason : Some */[fetchedData[0]],
-                              /* status : Failed */2
-                            ]]);
-                } else {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* data */fetchedData[0],
-                              /* reason : None */0,
-                              /* status : Idle */0
-                            ]]);
-                }
-              }
-            }),
-          /* subscriptions */component$2[/* subscriptions */13],
-          /* jsElementWrapped */component$2[/* jsElementWrapped */14]
-        ];
-}
-
-function compose$1(payload, headers, key, ref, $staropt$star, render) {
-  var lazy_ = $staropt$star ? $staropt$star[0] : false;
-  return ReasonReact.element(key, ref, make$2(render, payload, headers, /* Some */[lazy_], /* array */[]));
-}
-
-var FdList = /* module */[
-  /* url */url$3,
-  /* fetch */fetch$2,
-  /* component */component$2,
-  /* make */make$2,
-  /* compose */compose$1
-];
-
-var name$2 = "MountList";
-
-var url$4 = "mount";
-
-function encodePayload$2() {
-  return null;
-}
-
-function decodeState$2(json) {
-  var match = Js_json.decodeArray(json);
-  if (match) {
-    var __x = Belt_List.fromArray(match[0]);
-    return Belt_List.keepMap(__x, Js_json.decodeString);
-  } else {
-    return /* [] */0;
-  }
-}
-
-var MountListConfig = /* module */[
-  /* name */name$2,
-  /* url */url$4,
-  /* headers : [] */0,
-  /* defaultValue : [] */0,
-  /* method__ : Get */0,
-  /* encodePayload */encodePayload$2,
-  /* decodeState */decodeState$2
-];
-
-var url$5 = "/api/mount";
-
-function fetch$3(payload, headers, _) {
-  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
-  var headers$1 = Object.assign({
-        "Content-Type": "application/json"
-      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
-  return fetch(url$5, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
-}
-
-var component$3 = ReasonReact.reducerComponent(name$2);
-
-function make$3(render, payload, headers, $staropt$star, _) {
+function make$3(render, payload, headers, query, $staropt$star, _) {
   var lazy_ = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component$3[/* debugName */0],
@@ -659,7 +456,7 @@ function make$3(render, payload, headers, $staropt$star, _) {
             }),
           /* initialState */(function () {
               return /* record */[
-                      /* data : [] */0,
+                      /* data */defaultValue,
                       /* reason : None */0,
                       /* status : Idle */0
                     ];
@@ -681,10 +478,10 @@ function make$3(render, payload, headers, $staropt$star, _) {
                               /* status : Fetching */1
                             ],
                             (function (self) {
-                                fetch$3(payload, headers, /* () */0).then((function (prim) {
+                                fetch$1(payload, headers, query, /* () */0).then((function (prim) {
                                             return prim.json();
                                           })).then((function (json) {
-                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState$2(json)])]);
+                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState(json)])]);
                                           return Promise.resolve(null);
                                         })).catch((function (err) {
                                         console.log("Error: ", err);
@@ -719,26 +516,609 @@ function make$3(render, payload, headers, $staropt$star, _) {
         ];
 }
 
-function compose$2(payload, headers, key, ref, $staropt$star, render) {
+function c(payload, headers, key, ref, $staropt$star, _, render) {
   var lazy_ = $staropt$star ? $staropt$star[0] : false;
-  return ReasonReact.element(key, ref, make$3(render, payload, headers, /* Some */[lazy_], /* array */[]));
+  return ReasonReact.element(key, ref, make$3(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
+}
+
+var RLimit = /* module */[
+  /* fetch */fetch$1,
+  /* component */component$3,
+  /* make */make$3,
+  /* c */c
+];
+
+var name$1 = "RLimitFetcher";
+
+var url$1 = "fd";
+
+function encodePayload$1() {
+  return null;
+}
+
+function decodeState$1(json) {
+  var match = Js_json.decodeArray(json);
+  if (match) {
+    var __x = Belt_List.fromArray(match[0]);
+    var __x$1 = Belt_List.keepMap(__x, Js_json.decodeNumber);
+    return Belt_List.map(__x$1, (function (d) {
+                  return String(d | 0);
+                }));
+  } else {
+    return /* [] */0;
+  }
+}
+
+var FdListConfig = /* module */[
+  /* name */name$1,
+  /* url */url$1,
+  /* headers : [] */0,
+  /* defaultValue : [] */0,
+  /* method__ : Get */0,
+  /* encodePayload */encodePayload$1,
+  /* decodeState */decodeState$1
+];
+
+function fetch$2(payload, headers, query, _) {
+  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
+  var url$2 = baseUrl + (url$1 + (
+      query ? query[0] : ""
+    ));
+  var headers$1 = Object.assign({
+        "Content-Type": "application/json"
+      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
+  return fetch(url$2, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
+}
+
+var component$4 = ReasonReact.reducerComponent(name$1);
+
+function make$4(render, payload, headers, query, $staropt$star, _) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return /* record */[
+          /* debugName */component$4[/* debugName */0],
+          /* reactClassInternal */component$4[/* reactClassInternal */1],
+          /* handedOffState */component$4[/* handedOffState */2],
+          /* willReceiveProps */(function (self) {
+              Curry._1(self[/* send */3], /* Fetch */0);
+              return self[/* state */1];
+            }),
+          /* didMount */(function (self) {
+              if (lazy_ === false) {
+                Curry._1(self[/* send */3], /* Fetch */0);
+              }
+              return /* () */0;
+            }),
+          /* didUpdate */component$4[/* didUpdate */5],
+          /* willUnmount */component$4[/* willUnmount */6],
+          /* willUpdate */component$4[/* willUpdate */7],
+          /* shouldUpdate */component$4[/* shouldUpdate */8],
+          /* render */(function (self) {
+              var state = self[/* state */1];
+              var fetch = function () {
+                return Curry._1(self[/* send */3], /* Fetch */0);
+              };
+              return Curry._1(render, /* record */[
+                          /* state */state,
+                          /* fetch */fetch
+                        ]);
+            }),
+          /* initialState */(function () {
+              return /* record */[
+                      /* data : [] */0,
+                      /* reason : None */0,
+                      /* status : Idle */0
+                    ];
+            }),
+          /* retainedProps */component$4[/* retainedProps */11],
+          /* reducer */(function (action, state) {
+              if (typeof action === "number") {
+                if (action !== 0) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Idle */0
+                            ]]);
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Fetching */1
+                            ],
+                            (function (self) {
+                                fetch$2(payload, headers, query, /* () */0).then((function (prim) {
+                                            return prim.json();
+                                          })).then((function (json) {
+                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState$1(json)])]);
+                                          return Promise.resolve(null);
+                                        })).catch((function (err) {
+                                        console.log("Error: ", err);
+                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
+                                        return Promise.resolve(null);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              } else {
+                var fetchedData = action[0];
+                if (typeof fetchedData === "number") {
+                  return /* NoUpdate */0;
+                } else if (fetchedData.tag) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason : Some */[fetchedData[0]],
+                              /* status : Failed */2
+                            ]]);
+                } else {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */fetchedData[0],
+                              /* reason : None */0,
+                              /* status : Idle */0
+                            ]]);
+                }
+              }
+            }),
+          /* subscriptions */component$4[/* subscriptions */13],
+          /* jsElementWrapped */component$4[/* jsElementWrapped */14]
+        ];
+}
+
+function c$1(payload, headers, key, ref, $staropt$star, _, render) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return ReasonReact.element(key, ref, make$4(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
+}
+
+var FdList = /* module */[
+  /* fetch */fetch$2,
+  /* component */component$4,
+  /* make */make$4,
+  /* c */c$1
+];
+
+var name$2 = "MountList";
+
+var url$2 = "mount";
+
+function encodePayload$2() {
+  return null;
+}
+
+function decodeState$2(json) {
+  var match = Js_json.decodeArray(json);
+  if (match) {
+    var __x = Belt_List.fromArray(match[0]);
+    return Belt_List.keepMap(__x, Js_json.decodeString);
+  } else {
+    return /* [] */0;
+  }
+}
+
+var MountListConfig = /* module */[
+  /* name */name$2,
+  /* url */url$2,
+  /* headers : [] */0,
+  /* defaultValue : [] */0,
+  /* method__ : Get */0,
+  /* encodePayload */encodePayload$2,
+  /* decodeState */decodeState$2
+];
+
+function fetch$3(payload, headers, query, _) {
+  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
+  var url$3 = baseUrl + (url$2 + (
+      query ? query[0] : ""
+    ));
+  var headers$1 = Object.assign({
+        "Content-Type": "application/json"
+      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
+  return fetch(url$3, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
+}
+
+var component$5 = ReasonReact.reducerComponent(name$2);
+
+function make$5(render, payload, headers, query, $staropt$star, _) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return /* record */[
+          /* debugName */component$5[/* debugName */0],
+          /* reactClassInternal */component$5[/* reactClassInternal */1],
+          /* handedOffState */component$5[/* handedOffState */2],
+          /* willReceiveProps */(function (self) {
+              Curry._1(self[/* send */3], /* Fetch */0);
+              return self[/* state */1];
+            }),
+          /* didMount */(function (self) {
+              if (lazy_ === false) {
+                Curry._1(self[/* send */3], /* Fetch */0);
+              }
+              return /* () */0;
+            }),
+          /* didUpdate */component$5[/* didUpdate */5],
+          /* willUnmount */component$5[/* willUnmount */6],
+          /* willUpdate */component$5[/* willUpdate */7],
+          /* shouldUpdate */component$5[/* shouldUpdate */8],
+          /* render */(function (self) {
+              var state = self[/* state */1];
+              var fetch = function () {
+                return Curry._1(self[/* send */3], /* Fetch */0);
+              };
+              return Curry._1(render, /* record */[
+                          /* state */state,
+                          /* fetch */fetch
+                        ]);
+            }),
+          /* initialState */(function () {
+              return /* record */[
+                      /* data : [] */0,
+                      /* reason : None */0,
+                      /* status : Idle */0
+                    ];
+            }),
+          /* retainedProps */component$5[/* retainedProps */11],
+          /* reducer */(function (action, state) {
+              if (typeof action === "number") {
+                if (action !== 0) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Idle */0
+                            ]]);
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Fetching */1
+                            ],
+                            (function (self) {
+                                fetch$3(payload, headers, query, /* () */0).then((function (prim) {
+                                            return prim.json();
+                                          })).then((function (json) {
+                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [decodeState$2(json)])]);
+                                          return Promise.resolve(null);
+                                        })).catch((function (err) {
+                                        console.log("Error: ", err);
+                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
+                                        return Promise.resolve(null);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              } else {
+                var fetchedData = action[0];
+                if (typeof fetchedData === "number") {
+                  return /* NoUpdate */0;
+                } else if (fetchedData.tag) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason : Some */[fetchedData[0]],
+                              /* status : Failed */2
+                            ]]);
+                } else {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */fetchedData[0],
+                              /* reason : None */0,
+                              /* status : Idle */0
+                            ]]);
+                }
+              }
+            }),
+          /* subscriptions */component$5[/* subscriptions */13],
+          /* jsElementWrapped */component$5[/* jsElementWrapped */14]
+        ];
+}
+
+function c$2(payload, headers, key, ref, $staropt$star, _, render) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return ReasonReact.element(key, ref, make$5(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
 }
 
 var MountList = /* module */[
-  /* url */url$5,
   /* fetch */fetch$3,
-  /* component */component$3,
-  /* make */make$3,
-  /* compose */compose$2
+  /* component */component$5,
+  /* make */make$5,
+  /* c */c$2
 ];
+
+var name$3 = "MountList";
+
+var url$3 = "mount";
+
+var defaultValue$1 = null;
+
+function encodePayload$3() {
+  return null;
+}
+
+function decodeState$3() {
+  return null;
+}
+
+var ReverseShellConfig = /* module */[
+  /* name */name$3,
+  /* url */url$3,
+  /* headers : [] */0,
+  /* defaultValue */defaultValue$1,
+  /* method__ : Get */0,
+  /* encodePayload */encodePayload$3,
+  /* decodeState */decodeState$3
+];
+
+function fetch$4(payload, headers, query, _) {
+  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
+  var url$4 = baseUrl + (url$3 + (
+      query ? query[0] : ""
+    ));
+  var headers$1 = Object.assign({
+        "Content-Type": "application/json"
+      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
+  return fetch(url$4, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
+}
+
+var component$6 = ReasonReact.reducerComponent(name$3);
+
+function make$6(render, payload, headers, query, $staropt$star, _) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return /* record */[
+          /* debugName */component$6[/* debugName */0],
+          /* reactClassInternal */component$6[/* reactClassInternal */1],
+          /* handedOffState */component$6[/* handedOffState */2],
+          /* willReceiveProps */(function (self) {
+              Curry._1(self[/* send */3], /* Fetch */0);
+              return self[/* state */1];
+            }),
+          /* didMount */(function (self) {
+              if (lazy_ === false) {
+                Curry._1(self[/* send */3], /* Fetch */0);
+              }
+              return /* () */0;
+            }),
+          /* didUpdate */component$6[/* didUpdate */5],
+          /* willUnmount */component$6[/* willUnmount */6],
+          /* willUpdate */component$6[/* willUpdate */7],
+          /* shouldUpdate */component$6[/* shouldUpdate */8],
+          /* render */(function (self) {
+              var state = self[/* state */1];
+              var fetch = function () {
+                return Curry._1(self[/* send */3], /* Fetch */0);
+              };
+              return Curry._1(render, /* record */[
+                          /* state */state,
+                          /* fetch */fetch
+                        ]);
+            }),
+          /* initialState */(function () {
+              return /* record */[
+                      /* data */defaultValue$1,
+                      /* reason : None */0,
+                      /* status : Idle */0
+                    ];
+            }),
+          /* retainedProps */component$6[/* retainedProps */11],
+          /* reducer */(function (action, state) {
+              if (typeof action === "number") {
+                if (action !== 0) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Idle */0
+                            ]]);
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Fetching */1
+                            ],
+                            (function (self) {
+                                fetch$4(payload, headers, query, /* () */0).then((function (prim) {
+                                            return prim.json();
+                                          })).then((function () {
+                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [null])]);
+                                          return Promise.resolve(null);
+                                        })).catch((function (err) {
+                                        console.log("Error: ", err);
+                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
+                                        return Promise.resolve(null);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              } else {
+                var fetchedData = action[0];
+                if (typeof fetchedData === "number") {
+                  return /* NoUpdate */0;
+                } else if (fetchedData.tag) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason : Some */[fetchedData[0]],
+                              /* status : Failed */2
+                            ]]);
+                } else {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */fetchedData[0],
+                              /* reason : None */0,
+                              /* status : Idle */0
+                            ]]);
+                }
+              }
+            }),
+          /* subscriptions */component$6[/* subscriptions */13],
+          /* jsElementWrapped */component$6[/* jsElementWrapped */14]
+        ];
+}
+
+function c$3(payload, headers, key, ref, $staropt$star, _, render) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return ReasonReact.element(key, ref, make$6(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
+}
+
+var ReverseShell = /* module */[
+  /* fetch */fetch$4,
+  /* component */component$6,
+  /* make */make$6,
+  /* c */c$3
+];
+
+var name$4 = "AllocateFetcher";
+
+var url$4 = "allocate";
+
+var defaultValue$2 = null;
+
+function encodePayload$4() {
+  return null;
+}
+
+function decodeState$4() {
+  return null;
+}
+
+var AllocateConfig = /* module */[
+  /* name */name$4,
+  /* url */url$4,
+  /* headers : [] */0,
+  /* defaultValue */defaultValue$2,
+  /* method__ : Get */0,
+  /* encodePayload */encodePayload$4,
+  /* decodeState */decodeState$4
+];
+
+function fetch$5(payload, headers, query, _) {
+  var body = payload ? /* Some */[Json.stringify(null)] : /* None */0;
+  var url$5 = baseUrl + (url$4 + (
+      query ? query[0] : ""
+    ));
+  var headers$1 = Object.assign({
+        "Content-Type": "application/json"
+      }, Object.assign(Js_dict.fromList(/* [] */0), Js_dict.fromList(headers ? headers[0] : /* [] */0)));
+  return fetch(url$5, Fetch.RequestInit[/* make */0](/* Some */[/* Get */0], /* Some */[headers$1], body, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0));
+}
+
+var component$7 = ReasonReact.reducerComponent(name$4);
+
+function make$7(render, payload, headers, query, $staropt$star, _) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return /* record */[
+          /* debugName */component$7[/* debugName */0],
+          /* reactClassInternal */component$7[/* reactClassInternal */1],
+          /* handedOffState */component$7[/* handedOffState */2],
+          /* willReceiveProps */(function (self) {
+              Curry._1(self[/* send */3], /* Fetch */0);
+              return self[/* state */1];
+            }),
+          /* didMount */(function (self) {
+              if (lazy_ === false) {
+                Curry._1(self[/* send */3], /* Fetch */0);
+              }
+              return /* () */0;
+            }),
+          /* didUpdate */component$7[/* didUpdate */5],
+          /* willUnmount */component$7[/* willUnmount */6],
+          /* willUpdate */component$7[/* willUpdate */7],
+          /* shouldUpdate */component$7[/* shouldUpdate */8],
+          /* render */(function (self) {
+              var state = self[/* state */1];
+              var fetch = function () {
+                return Curry._1(self[/* send */3], /* Fetch */0);
+              };
+              return Curry._1(render, /* record */[
+                          /* state */state,
+                          /* fetch */fetch
+                        ]);
+            }),
+          /* initialState */(function () {
+              return /* record */[
+                      /* data */defaultValue$2,
+                      /* reason : None */0,
+                      /* status : Idle */0
+                    ];
+            }),
+          /* retainedProps */component$7[/* retainedProps */11],
+          /* reducer */(function (action, state) {
+              if (typeof action === "number") {
+                if (action !== 0) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Idle */0
+                            ]]);
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* data */state[/* data */0],
+                              /* reason */state[/* reason */1],
+                              /* status : Fetching */1
+                            ],
+                            (function (self) {
+                                fetch$5(payload, headers, query, /* () */0).then((function (prim) {
+                                            return prim.json();
+                                          })).then((function () {
+                                          Curry._1(self[/* send */3], /* ParseData */[/* Success */Block.__(0, [null])]);
+                                          return Promise.resolve(null);
+                                        })).catch((function (err) {
+                                        console.log("Error: ", err);
+                                        Curry._1(self[/* send */3], /* ParseData */[/* Failed */Block.__(1, ["Fetch Error"])]);
+                                        return Promise.resolve(null);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              } else {
+                var fetchedData = action[0];
+                if (typeof fetchedData === "number") {
+                  return /* NoUpdate */0;
+                } else if (fetchedData.tag) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */state[/* data */0],
+                              /* reason : Some */[fetchedData[0]],
+                              /* status : Failed */2
+                            ]]);
+                } else {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* data */fetchedData[0],
+                              /* reason : None */0,
+                              /* status : Idle */0
+                            ]]);
+                }
+              }
+            }),
+          /* subscriptions */component$7[/* subscriptions */13],
+          /* jsElementWrapped */component$7[/* jsElementWrapped */14]
+        ];
+}
+
+function c$4(payload, headers, key, ref, $staropt$star, _, render) {
+  var lazy_ = $staropt$star ? $staropt$star[0] : false;
+  return ReasonReact.element(key, ref, make$7(render, payload, headers, /* None */0, /* Some */[lazy_], /* array */[]));
+}
+
+var Allocate = /* module */[
+  /* fetch */fetch$5,
+  /* component */component$7,
+  /* make */make$7,
+  /* c */c$4
+];
+
+var Composer = 0;
 
 exports.CreateFetcherFactory = CreateFetcherFactory;
 exports.CreateFetcher = CreateFetcher;
+exports.Composer2 = Composer2;
+exports.Composer3 = Composer3;
 exports.Composer = Composer;
+exports.Composer4 = Composer4;
 exports.RLimitConfig = RLimitConfig;
 exports.RLimit = RLimit;
 exports.FdListConfig = FdListConfig;
 exports.FdList = FdList;
 exports.MountListConfig = MountListConfig;
 exports.MountList = MountList;
+exports.ReverseShellConfig = ReverseShellConfig;
+exports.ReverseShell = ReverseShell;
+exports.AllocateConfig = AllocateConfig;
+exports.Allocate = Allocate;
 /* component Not a pure module */

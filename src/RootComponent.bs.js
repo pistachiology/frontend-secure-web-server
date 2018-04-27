@@ -2,8 +2,10 @@
 'use strict';
 
 var Home = require("./Home.bs.js");
+var About = require("./About.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var WithHeader = require("./WithHeader.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("RootComponent");
@@ -21,18 +23,16 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var match = self[/* state */1][/* route */0];
-              if (match) {
-                return ReasonReact.element(/* None */0, /* None */0, Home.make(/* array */[]));
-              } else {
-                return ReasonReact.element(/* None */0, /* None */0, Home.make(/* array */[]));
-              }
+              return ReasonReact.element(/* None */0, /* None */0, WithHeader.make(/* array */[match ? ReasonReact.element(/* None */0, /* None */0, About.make(/* array */[])) : ReasonReact.element(/* None */0, /* None */0, Home.make(/* array */[]))]));
             }),
           /* initialState */(function () {
               return /* record */[/* route : Home */0];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, _) {
-              return /* Update */Block.__(0, [/* record */[/* route */action[0]]]);
+              var route = action[0];
+              console.log("update route ", route);
+              return /* Update */Block.__(0, [/* record */[/* route */route]]);
             }),
           /* subscriptions */(function (self) {
               return /* :: */[
@@ -43,11 +43,11 @@ function make() {
                                           var tmp;
                                           if (match) {
                                             switch (match[0]) {
-                                              case "/about" : 
+                                              case "about" : 
                                                   tmp = match[1] ? /* Home */0 : /* About */1;
                                                   break;
-                                              case "/" : 
-                                              case "/index" : 
+                                              case "" : 
+                                              case "index" : 
                                                   tmp = /* Home */0;
                                                   break;
                                               default:

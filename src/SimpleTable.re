@@ -27,7 +27,8 @@ module Styles = {
 
 let make = (~dataSource: 'a, _children) => {
   ...component,
-  render: _self =>
+  render: _self => {
+    Js.Console.log("rerendered!");
     ReasonReact.(
       <div className=Styles.infoTable>
         <div className="header row">
@@ -46,5 +47,6 @@ let make = (~dataSource: 'a, _children) => {
           |> array
         )
       </div>
-    ),
+    );
+  },
 };

@@ -78,6 +78,7 @@ function make(dataSource, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
+              console.log("rerendered!");
               return React.createElement("div", {
                           className: infoTable
                         }, React.createElement("div", {

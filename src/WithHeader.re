@@ -18,8 +18,16 @@ let make = children => {
             <Header>
               <Menu
                 theme=`Dark mode=`Horizontal defaultSelectedKeys=[|"1"|] className=Styles.menu>
-                <Menu.Item key="1"> ("Home" |> string) </Menu.Item>
-                <Menu.Item key="2"> ("About" |> string) </Menu.Item>
+                <Menu.Item key="1">
+                  <div onClick=(_e => ReasonReact.Router.push("/") |> ignore)>
+                    ("Home" |> string)
+                  </div>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <div onClick=(_e => ReasonReact.Router.push("/about") |> ignore)>
+                    ("About" |> string)
+                  </div>
+                </Menu.Item>
               </Menu>
             </Header>
             <Content className=Styles.content>
