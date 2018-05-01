@@ -1,49 +1,32 @@
-type route =
-  | Home
-  | About;
-
-type state = {route};
+type state = {route: Route.t};
 
 type action =
-  | UpdateRoute(route);
+  | UpdateRoute(ReasonReact.Router.url);
 
 let component = ReasonReact.reducerComponent("RootComponent");
 
 let make = _children => {
   ...component,
   initialState: () => {route: Home},
+  didMount: self => {
+    self.send(UpdateRoute(ReasonReact.Router.dangerouslyGetInitialUrl()));
+    ();
+  },
   subscriptions: self => [
     Sub(
-      () =>
-        ReasonReact.Router.watchUrl(url =>
-          self.send(
-            UpdateRoute(
-              switch (url.path) {
-              | [""] => Home
-              | ["index"] => Home
-              | ["about"] => About
-              | _ => Home
-              },
-            ),
-          )
-        ),
+      () => ReasonReact.Router.watchUrl(url => self.send(UpdateRoute(url))),
       ReasonReact.Router.unwatchUrl,
     ),
   ],
   reducer: (action, _state) =>
     switch (action) {
-    | UpdateRoute(route) =>
-      Js.log2("update route ", route);
+    | UpdateRoute(url) =>
+      let route = Route.handleRoutes(url);
       ReasonReact.Update({route: route});
     },
   render: self =>
-    <WithHeader>
-      (
-        switch (self.state.route) {
-        | Home => <Home />
-        | About => <About />
-        }
-      )
+    <WithHeader route=self.state.route>
+      (Route.handleRouteComponents(self.state.route))
     </WithHeader>,
 };
 

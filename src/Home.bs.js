@@ -12,7 +12,12 @@ var Antd_Button = require("bs-ant-design/src/Antd_Button.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var SimpleTable = require("./SimpleTable.bs.js");
+var Message = require("antd/lib/message");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+
+((require("antd/lib/message/style")));
+
+var Message$1 = /* module */[];
 
 var title = Css.style(/* :: */[
       Css.fontSize(Css.px(48)),
@@ -228,9 +233,9 @@ function make(rlimit, fdList, mountList, _) {
                                               Fetcher.Allocate[/* fetch */0](/* None */0, /* None */0, /* Some */["/" + String(self[/* state */1][/* memory */0])], /* () */0).then((function (res) {
                                                       var match = res.status;
                                                       if (match !== 400) {
-                                                        (( alert("receive success") ));
+                                                        Message.info("container allocate successfully", undefined, undefined);
                                                       } else {
-                                                        (( alert("container receive fail") ));
+                                                        Message.error("container fail to allocate", undefined, undefined);
                                                       }
                                                       return Promise.resolve(res);
                                                     }));
@@ -321,6 +326,7 @@ function make$1() {
         ];
 }
 
+exports.Message = Message$1;
 exports.Styles = Styles;
 exports.convertRlimitToDataSource = convertRlimitToDataSource;
 exports.listToString_ = listToString_;
@@ -329,4 +335,4 @@ exports.Component = Component;
 exports.fetchers = fetchers;
 exports.component = component$1;
 exports.make = make$1;
-/* title Not a pure module */
+/*  Not a pure module */

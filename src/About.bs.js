@@ -17,15 +17,66 @@ var container = Css.style(/* :: */[
             Css.fontWeight(800),
             /* :: */[
               Css.width(Css.pct(100)),
-              /* [] */0
+              /* :: */[
+                Css.$$float(/* left */-944764921),
+                /* :: */[
+                  Css.width(Css.pct(100)),
+                  /* [] */0
+                ]
+              ]
             ]
           ]),
       /* [] */0
     ]);
 
+var infoContainer = Css.style(/* :: */[
+      Css.padding2(Css.px(32), Css.px(32)),
+      /* :: */[
+        Css.selector(" h2", /* :: */[
+              Css.fontSize(Css.px(32)),
+              /* :: */[
+                Css.marginBottom(Css.px(16)),
+                /* [] */0
+              ]
+            ]),
+        /* :: */[
+          Css.selector(" h3", /* :: */[
+                Css.fontSize(Css.px(24)),
+                /* :: */[
+                  Css.fontWeight(600),
+                  /* :: */[
+                    Css.marginBottom(Css.px(16)),
+                    /* [] */0
+                  ]
+                ]
+              ]),
+          /* :: */[
+            Css.selector(" p", /* :: */[
+                  Css.color(Css.black),
+                  /* [] */0
+                ]),
+            /* :: */[
+              Css.selector(" .box", /* :: */[
+                    Css.width(Css.pct(50)),
+                    /* :: */[
+                      Css.height(Css.px(200)),
+                      /* :: */[
+                        Css.$$float(/* left */-944764921),
+                        /* [] */0
+                      ]
+                    ]
+                  ]),
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* title */title,
-  /* container */container
+  /* container */container,
+  /* infoContainer */infoContainer
 ];
 
 function make() {
@@ -44,7 +95,15 @@ function make() {
                           className: container
                         }, React.createElement("h1", {
                               className: title
-                            }, "About"));
+                            }, "About"), React.createElement("div", {
+                              className: infoContainer
+                            }, React.createElement("div", {
+                                  className: "box"
+                                }, React.createElement("h3", undefined, "Developed By"), React.createElement("p", undefined, "Nuttapol Laoticharoen"), React.createElement("p", undefined, "#5710500208")), React.createElement("br", undefined), React.createElement("div", {
+                                  className: "box"
+                                }, React.createElement("h3", undefined, "Advisor"), React.createElement("p", undefined, "Paruj Ratanaworabhan")), React.createElement("div", {
+                                  className: "box"
+                                }, React.createElement("h3", undefined, "Implementation"), React.createElement("p", undefined, "Frontend: ReasonML (Reason-React)"), React.createElement("p", undefined, "Backend: Rust"))));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Route = require("./Route.bs.js");
 var React = require("react");
 var Antd_Menu = require("bs-ant-design/src/Antd_Menu.js");
 var Antd_Layout = require("bs-ant-design/src/Antd_Layout.js");
@@ -21,7 +22,16 @@ var menu = Css.style(/* :: */[
 
 var content = Css.style(/* :: */[
       Css.padding2(Css.px(0), Css.px(50)),
-      /* [] */0
+      /* :: */[
+        Css.width(Css.pct(100)),
+        /* :: */[
+          Css.$$float(/* left */-944764921),
+          /* :: */[
+            Css.minHeight(Css.vh(100)),
+            /* [] */0
+          ]
+        ]
+      ]
     ]);
 
 var childbox = Css.style(/* :: */[
@@ -30,7 +40,13 @@ var childbox = Css.style(/* :: */[
         Css.padding(Css.px(24)),
         /* :: */[
           Css.minHeight(Css.px(280)),
-          /* [] */0
+          /* :: */[
+            Css.width(Css.pct(100)),
+            /* :: */[
+              Css.$$float(/* left */-944764921),
+              /* [] */0
+            ]
+          ]
         ]
       ]
     ]);
@@ -49,7 +65,7 @@ var Styles = /* module */[
 
 var component = ReasonReact.statelessComponent("Header");
 
-function make(children) {
+function make(route, children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -62,22 +78,22 @@ function make(children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Antd_Layout.make(/* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Header[/* make */0](/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Menu.make(/* Some */[/* Dark */758939798], /* Some */[/* Horizontal */208994564], /* None */0, /* None */0, /* Some */[/* array */["1"]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[menu], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ReasonReact.element(/* Some */["1"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
+                              ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Header[/* make */0](/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Menu.make(/* Some */[/* Dark */758939798], /* Some */[/* Horizontal */208994564], /* None */0, /* Some */[/* array */[Route.toKey(route)]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[menu], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                  ReasonReact.element(/* Some */[Route.toKey(/* Home */0)], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
                                                                   onClick: (function () {
                                                                       ReasonReact.Router[/* push */0]("/");
                                                                       return /* () */0;
                                                                     })
-                                                                }, "Home")])),
-                                                  ReasonReact.element(/* Some */["2"], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
+                                                                }, Route.toString(/* Home */0))])),
+                                                  ReasonReact.element(/* Some */[Route.toKey(/* About */1)], /* None */0, Antd_Menu.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
                                                                   onClick: (function () {
                                                                       ReasonReact.Router[/* push */0]("/about");
                                                                       return /* () */0;
                                                                     })
-                                                                }, "About")]))
+                                                                }, Route.toString(/* About */1))]))
                                                 ]))])),
                               ReasonReact.element(/* None */0, /* None */0, Antd_Layout.Content[/* make */0](/* None */0, /* Some */[content], /* None */0, /* array */[
-                                        ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[breadcrumb], /* None */0)(/* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Home"]))])),
+                                        ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[breadcrumb], /* None */0)(/* array */[ReasonReact.element(/* None */0, /* None */0, Antd_Breadcrumb.Item[/* make */0](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Route.toString(route)]))])),
                                         ReasonReact.createDomElement("div", {
                                               className: childbox
                                             }, children)

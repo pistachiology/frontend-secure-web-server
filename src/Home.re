@@ -1,5 +1,17 @@
 open Belt;
 
+[%bs.raw {|require("antd/lib/message/style")|}];
+
+/* Dirty binding */
+module Message = {
+  [@bs.module "antd/lib/message"]
+  external info : (~content: string, ~duration: float=?, ~onClose: unit => unit=?, unit) => unit =
+    "info";
+  [@bs.module "antd/lib/message"]
+  external error : (~content: string, ~duration: float=?, ~onClose: unit => unit=?, unit) => unit =
+    "error";
+};
+
 module Styles = {
   let title = Css.(style([fontSize(48 |> px)]));
   let container =
@@ -80,7 +92,7 @@ module Component = {
             )
           </div>
           <div className=Styles.infoContainer>
-            <h2> ("Reverse Shell & Memory Limit" |> string) </h2>
+            <h2> ("Memory Limit" |> string) </h2>
             <div className=Styles.memoryAbuseContainer>
               <span> ("Memory Size (byte): " |> string) </span>
               <input
@@ -115,10 +127,8 @@ module Component = {
                     |> Js.Promise.then_(res => {
                          let _ =
                            switch (res |> Fetch.Response.status) {
-                           | 400 => %bs.raw
-                                    {| alert("container receive fail") |}
-                           | _ => %bs.raw
-                                  {| alert("receive success") |}
+                           | 400 => Message.error(~content="container fail to allocate", ())
+                           | _ => Message.info(~content="container allocate successfully", ())
                            };
                          Js.Promise.resolve(res);
                        })
